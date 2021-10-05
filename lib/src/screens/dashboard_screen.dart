@@ -21,6 +21,15 @@ class DaashBoardScreen extends StatelessWidget {
                 backgroundImage: NetworkImage('https://w7.pngwing.com/pngs/340/946/png-transparent-avatar-user-computer-icons-software-developer-avatar-child-face-heroes.png'),
                 //child: Icon(Icons.verified_user)
               ),
+              otherAccountsPictures: [
+                IconButton(
+                  onPressed: (){
+                    Navigator.pop(context);
+                    Navigator.pushNamed(context, '/perfil');
+                  }, 
+                  icon: Icon(Icons.settings)
+                ),
+              ],
               decoration: BoxDecoration(
                 color: ColorsSettings.colorPrimary
               ),
@@ -43,6 +52,26 @@ class DaashBoardScreen extends StatelessWidget {
               onTap: (){
                 Navigator.pop(context);
                 Navigator.pushNamed(context, '/intenciones');
+              },
+            ),
+            ListTile(
+              title: Text('Notas'),
+              subtitle: Text('CRUD notas'),
+              leading: Icon(Icons.phone_android),
+              trailing: Icon(Icons.chevron_right),
+              onTap: (){
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/notas');
+              },
+            ),
+            ListTile(
+              title: Text('Movies'),
+              subtitle: Text('Prueba API REST'),
+              leading: Icon(Icons.phone_android),
+              trailing: Icon(Icons.chevron_right),
+              onTap: (){
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/movie');
               },
             )
           ], 
