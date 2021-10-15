@@ -13,6 +13,7 @@ class ApiPopular{
     if(response.statusCode == 200){ //se ejecuto correctamente
       var popular = jsonDecode(response.body)['results'] as List;
       List<PopularMoviesModel> listPopular =  popular.map((movie) => PopularMoviesModel.fromMap(movie)).toList();  //convertir mapa a objeto
+      return listPopular;
     }else{
       return null;
     }

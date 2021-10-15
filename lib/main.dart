@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:practica2/src/screens/agregar_nota_screen.dart';
+import 'package:practica2/src/screens/agregar_task_screen.dart';
 import 'package:practica2/src/screens/intenciones_screen.dart';
 import 'package:practica2/src/screens/movies_screens/popular_screen.dart';
 import 'package:practica2/src/screens/notas_screen.dart';
 import 'package:practica2/src/screens/opcion1_screen.dart';
 import 'package:practica2/src/screens/splash_screen.dart';
 import 'package:practica2/src/screens/profile_screen.dart';
+import 'package:practica2/src/screens/task_list_entrega_screen.dart';
+import 'package:practica2/src/screens/tasks_screen.dart';
 
 void main() {
   runApp(MyApp());
@@ -24,6 +27,9 @@ class MyApp extends StatelessWidget {
         '/agregar' : (BuildContext context) => AgregarNotaScreen(),
         '/perfil' : (BuildContext context) => ProfileScreen(),
         '/movie' : (BuildContext context) => PopularScreen(),
+        '/task' : (BuildContext context) => TasksScreen(),
+        '/agregartask' : (BuildContext context) => AgregarTaskScreen(),
+        '/taskentregadas' : (BuildContext context) => TaskEntregadas(),
       },
       debugShowCheckedModeBanner: false,
       //home: LoginScreen(),

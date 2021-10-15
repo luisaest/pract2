@@ -3,13 +3,15 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:practica2/src/models/notas_model.dart';
 import 'package:practica2/src/models/perfil_model.dart';
+import 'package:practica2/src/models/tasks_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   static final _nombreBD = "NOTASBD";
-  static final _versionBD = 4;
+  static final _versionBD = 7;
   static final _nombreTBL = "tblNotas";
   static final _nombreTBLP = "tblPerfil";
+  static final _nombreTBLT = "tblTask";
   static Database? _database;
 
   Future<Database?> get database async {
@@ -30,14 +32,13 @@ class DatabaseHelper {
   }
 
   Future<void> _onUpgrade(Database db, int oldversion, int newversion) async{
-    db.execute("DROP TABLE $_nombreTBLP");
-    db.execute("Create table $_nombreTBLP (id INTEGER PRIMARY KEY, nombre VARCHAR(50), apaterno VARCHAR(50), amaterno VARCHAR(50), tel VARCHAR(15), correo VARCHAR(60), avatar TEXT)");
+    await db.execute("UPDATE $_nombreTBLT SET nomTarea = 'prueba', dscTarea = 'jeje', fechaEntrega = '2021-10-15 00:00:00.000'  WHERE id =2");
   }
 
   Future<void> _crearTabla(Database db, int version) async{
     await db.execute("CREATE TABLE $_nombreTBL (id INTEGER PRIMARY KEY, titulo VARCHAR(50), detalle VARCHAR(100))");
     await db.execute("Create table $_nombreTBLP (id INTEGER PRIMARY KEY, nombre VARCHAR(50), apaterno VARCHAR(50), amaterno VARCHAR(50), tel VARCHAR(15), correo VARCHAR(60), avatar TEXT)");
-   
+    await db.execute("Create table $_nombreTBLT (id INTEGER PRIMARY KEY, nomTarea VARCHAR(50), dscTarea VARCHAR(100), fechaEntrega TEXT, entregada INTEGER)");
   }
   //VER TAMAÑO Y TIPO IMAGEN----------------------------------------
   
@@ -85,6 +86,35 @@ class DatabaseHelper {
   Future<int> updatePerfil(Map<String,dynamic> row) async{
     var conexion = await database;
     return conexion!.update(_nombreTBLP, row, where: 'id = ?', whereArgs: [row['id']]);
+  }
+
+  //tareas
+  Future<List<TaskModel>> getAllTask() async {
+    var conexion = await database;
+    var result = await conexion!.query(_nombreTBLT); //query es un select
+    return result.map((taskMap) => TaskModel.fromMap(taskMap)).toList();
+  }
+
+  insertTask(Map<String,dynamic> row) async{
+    var conexion = await database; //DEBEMOS PONER AWAIT PARA NO TENER ERRORES
+    return conexion!.insert(_nombreTBLT, row); //! indica que no debe ser nulo el insert
+  }
+
+  Future<int> updateTask(Map<String,dynamic> row) async{
+    var conexion = await database;
+    return conexion!.update(_nombreTBLT, row, where: 'id = ?', whereArgs: [row['id']]);
+  }
+
+  Future<int> deleteTask(int id) async{
+    var conexion = await database;
+    return await conexion!.delete(_nombreTBLT, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<TaskModel> getTask(int id) async{
+    var conexion = await database;
+    var result = await conexion!.query(_nombreTBLT, where: 'id = ?', whereArgs: [id]);
+    //result.map((notaMap) => NotasModel.fromMap(notaMap)).first;
+    return TaskModel.fromMap(result.first);
   }
 
 }

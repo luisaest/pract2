@@ -73,6 +73,16 @@ class DaashBoardScreen extends StatelessWidget {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, '/movie');
               },
+            ),
+            ListTile(
+              title: Text('Tareas'),
+              subtitle: Text('Tareas'),
+              leading: Icon(Icons.task),
+              trailing: Icon(Icons.chevron_right),
+              onTap: (){
+                Navigator.pop(context);
+                Navigator.pushNamed(context, '/task');
+              },
             )
           ], 
         )
