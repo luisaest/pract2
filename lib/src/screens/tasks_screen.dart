@@ -56,7 +56,7 @@ class _TasksScreenState extends State<TasksScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, '/agregartask').whenComplete((){ //refresh automatica
+          Navigator.pushNamed(context, '/movie').whenComplete((){ //refresh automatica
             setState(() {});
           });
         },

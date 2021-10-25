@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:practica2/src/models/popular_movies_model.dart';
 import 'package:practica2/src/network/api_popular.dart';
+import 'package:practica2/src/utils/color_settings.dart';
 import 'package:practica2/src/views/card_popular.dart';
 
 class PopularScreen extends StatefulWidget {
@@ -36,6 +37,15 @@ void initState(){
             }
           }
         }
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/favs').whenComplete((){ //refresh automatica
+            setState(() {});
+          });
+        },
+        child: const Icon(Icons.favorite),
+        backgroundColor: Colors.black,
       ),
     );
     

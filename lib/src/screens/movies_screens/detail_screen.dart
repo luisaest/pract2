@@ -1,5 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:practica2/database/database_helper.dart';
+import 'package:practica2/src/models/favorito_model.dart';
 import 'package:practica2/src/models/popular_movies_model.dart';
 import 'package:practica2/src/network/api_popular.dart';
 import 'package:practica2/src/utils/color_settings.dart';
@@ -15,11 +17,13 @@ class DetailScreen extends StatefulWidget {
 
 class _DetailScreenState extends State<DetailScreen> {
   ApiPopular? apiPopular;
-  
+  late DatabaseHelper _databaseHelper;
+
   @override
   void initState(){
     super.initState();
     apiPopular = ApiPopular();
+    _databaseHelper = DatabaseHelper();
   }
 
   @override
@@ -45,7 +49,8 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Widget _detalles(PopularMoviesModel? movies){
-    
+  FavoritoModel? fav;
+  bool colorfav = false; 
     return CustomScrollView(
         slivers: <Widget>[
           SliverAppBar(
@@ -102,9 +107,49 @@ class _DetailScreenState extends State<DetailScreen> {
                           )
                         ),
                         IconButton(
-                          onPressed: (){}, 
+                          onPressed: (){
+                            if(fav == null){
+                              FavoritoModel favo = FavoritoModel(
+                                id: movies.id,
+                                title: movies.title,
+                                backdrop_path: movies.backdropPath,
+                              );
+                              _databaseHelper.insertFav(favo.toMap()).then(
+                                (value){
+                                  if(value > 0){
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('Se ha añadido a favoritos'))
+                                    );
+                                    setState(() {
+                                      
+                                    });
+                                  }else{
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('La solicitud no se completo'))
+                                    );
+                                    setState(() {
+                                      
+                                    });
+                                  }
+                                }
+                              );
+                              colorfav = true;
+                            }else{
+                              colorfav = false;
+                              _databaseHelper.delete(movies.id!).then(
+                                (noRows){
+                                  if(noRows > 0){
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('Se ha eliminado de favoritos'))
+                                    );
+                                  setState(() {});
+                                  }
+                                }
+                              ); 
+                            }
+                          }, 
                           icon: Icon(Icons.favorite),
-                          color: Colors.white,
+                          color: colorfav == true ? Colors.red : Colors.white,
                         )
                       ],
                     ),

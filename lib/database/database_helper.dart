@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:practica2/src/models/favorito_model.dart';
 import 'package:practica2/src/models/notas_model.dart';
 import 'package:practica2/src/models/perfil_model.dart';
 import 'package:practica2/src/models/tasks_model.dart';
@@ -8,10 +9,11 @@ import 'package:sqflite/sqflite.dart';
 
 class DatabaseHelper {
   static final _nombreBD = "NOTASBD";
-  static final _versionBD = 7;
+  static final _versionBD = 8;
   static final _nombreTBL = "tblNotas";
   static final _nombreTBLP = "tblPerfil";
   static final _nombreTBLT = "tblTask";
+  static final _nombreTBLFav = "tblFav";
   static Database? _database;
 
   Future<Database?> get database async {
@@ -32,18 +34,35 @@ class DatabaseHelper {
   }
 
   Future<void> _onUpgrade(Database db, int oldversion, int newversion) async{
-    await db.execute("UPDATE $_nombreTBLT SET nomTarea = 'prueba', dscTarea = 'jeje', fechaEntrega = '2021-10-15 00:00:00.000'  WHERE id =2");
+    await db.execute("Create table $_nombreTBLFav (id INTEGER PRIMARY KEY, title VARCHAR(255), backdrop_path VARCHAR(255))");
   }
 
   Future<void> _crearTabla(Database db, int version) async{
     await db.execute("CREATE TABLE $_nombreTBL (id INTEGER PRIMARY KEY, titulo VARCHAR(50), detalle VARCHAR(100))");
     await db.execute("Create table $_nombreTBLP (id INTEGER PRIMARY KEY, nombre VARCHAR(50), apaterno VARCHAR(50), amaterno VARCHAR(50), tel VARCHAR(15), correo VARCHAR(60), avatar TEXT)");
     await db.execute("Create table $_nombreTBLT (id INTEGER PRIMARY KEY, nomTarea VARCHAR(50), dscTarea VARCHAR(100), fechaEntrega TEXT, entregada INTEGER)");
+    await db.execute("Create table $_nombreTBLFav (id INTEGER PRIMARY KEY, title VARCHAR(255), backdrop_path VARCHAR(255))");
   }
   //VER TAMAÑO Y TIPO IMAGEN----------------------------------------
   
-  
+  //FAVORITOS
+  insertFav(Map<String,dynamic> row) async{
+    var conexion = await database; //DEBEMOS PONER AWAIT PARA NO TENER ERRORES
+    return conexion!.insert(_nombreTBLFav, row); //! indica que no debe ser nulo el insert
+  }
+  Future<int> deleteFav(int id) async{
+    var conexion = await database;
+    return await conexion!.delete(_nombreTBLFav, where: 'id = ?', whereArgs: [id]);
+  }
 
+  Future<List<FavoritoModel>> getAllFavs() async {
+    var conexion = await database;
+    var result = await conexion!.query(_nombreTBLFav); //query es un select
+    return result.map((favMap) => FavoritoModel.fromMap(favMap)).toList();
+  }
+
+  
+  //notas
   insert(Map<String,dynamic> row) async{
     var conexion = await database; //DEBEMOS PONER AWAIT PARA NO TENER ERRORES
     return conexion!.insert(_nombreTBL, row); //! indica que no debe ser nulo el insert
@@ -53,6 +72,7 @@ class DatabaseHelper {
     var conexion = await database;
     return conexion!.update(_nombreTBL, row, where: 'id = ?', whereArgs: [row['id']]);
   }
+
 
   Future<int> delete(int id) async{
     var conexion = await database;
