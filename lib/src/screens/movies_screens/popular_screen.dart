@@ -32,7 +32,7 @@ void initState(){
             if(snapshot.connectionState == ConnectionState.done){
               return _listPopularMovies(snapshot.data);
             }else{
-              return CircularProgressIndicator();
+              return Center(child: CircularProgressIndicator());
             }
           }
         }
